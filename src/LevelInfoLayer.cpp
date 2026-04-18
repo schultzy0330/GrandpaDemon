@@ -1,11 +1,11 @@
 #include <Geode/Bindings.hpp>
 #include <Geode/modify/LevelInfoLayer.hpp>
+#include <Geode/utils/cocos.hpp>
 #include <vector>
 #include <string>
 #include "ListManager.h"
 #include "EffectsManager.h"
 #include "ParticleManager.h"
-#include <Geode/utils/cocos.hpp>
 
 using namespace geode::prelude;
 
@@ -16,63 +16,64 @@ class $modify(GrDInfoLayer, LevelInfoLayer) {
     };
     
     void updateDifficultyFace() {
-
         int aredlPos = ListManager::getPositionOfID(m_level->m_levelID);
         if (aredlPos == -1 || aredlPos > 499) {
             return;
         }
 
-        // Get the original difficulty icon
         CCSprite* originalIcon = nullptr;
         bool iconFound = false;
 
-        // Iterate through every object that is a direct child of the layer to find the difficulty face.
-       for (auto* obj : CCArrayExt<CCNode*>(this->getChildren())) {
-    if (CCSprite* newObj = dynamic_cast<CCSprite*>(obj)) {
-        if (newObj->getPosition() == m_difficultySprite->getPosition()
-        && newObj->getZOrder() == 3) {
-            originalIcon = newObj;
-            iconFound = true;
-            break;
+        for (auto* obj : this->getChildrenExt()) {
+            if (CCSprite* newObj = dynamic_cast<CCSprite*>(obj)) {
+                if (newObj->getPosition() == m_difficultySprite->getPosition() &&
+                    newObj->getZOrder() == 3) {
+                    originalIcon = newObj;
+                    iconFound = true;
+                    break;
+                }
+            }
         }
-    }
-}
 
-        // If the demon face somehow isn't found, notify the user.
-        if (originalIcon == nullptr || !iconFound) {
-            auto alert = FLAlertLayer::create("Error", "There was a problem loading the demon difficulty face.\nYour sceen resolution may not be supported.\n\n<cb>-Grandpa Demon</c>", "OK");
+        if (!originalIcon || !iconFound) {
+            auto alert = FLAlertLayer::create(
+                "Error",
+                "There was a problem loading the demon difficulty face.\nYour sceen resolution may not be supported.\n\n<cb>-Grandpa Demon</c>",
+                "OK"
+            );
             alert->m_scene = this;
             alert->show();
             return;
         }
 
         CCSprite* newIcon = ListManager::getSpriteFromPosition(aredlPos, true);
-        //CCSprite* newIcon = CCSprite::createWithSpriteFrameName("GrD_demon0_text.png"_spr);
+        if (!newIcon) {
+            return;
+        }
+
         newIcon->setID("grd-difficulty");
         
         auto newPos = originalIcon->getPosition();
         newIcon->setPosition(originalIcon->getPosition());
-        newIcon->setZOrder(originalIcon->getZOrder()+10);
-        
+        newIcon->setZOrder(originalIcon->getZOrder() + 10);
 
-       for (auto* clearObj : CCArrayExt<CCNode*>(originalIcon->getChildren())) {
-    if (CCSprite* newObj = dynamic_cast<CCSprite*>(clearObj)) {
-        if (newObj->getTag() == 69420) {
-            newObj->removeFromParentAndCleanup(true);
+        for (auto* clearObj : originalIcon->getChildrenExt()) {
+            if (CCSprite* newObj = dynamic_cast<CCSprite*>(clearObj)) {
+                if (newObj->getTag() == 69420) {
+                    newObj->removeFromParentAndCleanup(true);
+                }
+            }
         }
-    }
-}
 
-       for (auto* iconObj : CCArrayExt<CCNode*>(originalIcon->getChildren())) {
-    if (CCSprite* newObj = dynamic_cast<CCSprite*>(iconObj)) {
-        newObj->setTag(69420);
-        this->addChild(newObj);
-        newObj->setPosition(newPos);
-    }
-}
+        for (auto* iconObj : originalIcon->getChildrenExt()) {
+            if (CCSprite* newObj = dynamic_cast<CCSprite*>(iconObj)) {
+                newObj->setTag(69420);
+                this->addChild(newObj);
+                newObj->setPosition(newPos);
+            }
+        }
 
         originalIcon->setVisible(false);
-
         this->addChild(newIcon);
         
         if (m_fields->m_hasBeenOpened) {
@@ -91,14 +92,17 @@ class $modify(GrDInfoLayer, LevelInfoLayer) {
                 }
 
                 auto particle1 = ParticleManager::infiniteParticles1(50, isGrandpa);
-                particle1->setPosition({newIcon->getPositionX(), newIcon->getPositionY() + 5.f});
-                this->addChild(particle1);
+                if (particle1) {
+                    particle1->setPosition({ newIcon->getPositionX(), newIcon->getPositionY() + 5.f });
+                    this->addChild(particle1);
+                }
 
                 auto particle2 = ParticleManager::infiniteParticles2(50);
-                particle2->setPosition({newIcon->getPositionX(), newIcon->getPositionY() + 5.f});
-                this->addChild(particle2);
+                if (particle2) {
+                    particle2->setPosition({ newIcon->getPositionX(), newIcon->getPositionY() + 5.f });
+                    this->addChild(particle2);
+                }
             }
-
         }
 
         if (aredlPos <= 74 && aredlPos > 24) {
@@ -106,10 +110,11 @@ class $modify(GrDInfoLayer, LevelInfoLayer) {
 
             if (!Mod::get()->getSettingValue<bool>("particles-disable")) {
                 auto particle = ParticleManager::mythicalParticles(50);
-                particle->setPosition({newIcon->getPositionX(), newIcon->getPositionY() + 5.f});
-                this->addChild(particle);
+                if (particle) {
+                    particle->setPosition({ newIcon->getPositionX(), newIcon->getPositionY() + 5.f });
+                    this->addChild(particle);
+                }
             }
-            
         }
 
         if (aredlPos <= 149 && aredlPos > 74) {
@@ -117,19 +122,20 @@ class $modify(GrDInfoLayer, LevelInfoLayer) {
 
             if (!Mod::get()->getSettingValue<bool>("particles-disable")) {
                 auto particle = ParticleManager::legendaryParticles(50);
-                particle->setPosition({newIcon->getPositionX(), newIcon->getPositionY() + 5.f});
-                this->addChild(particle);
+                if (particle) {
+                    particle->setPosition({ newIcon->getPositionX(), newIcon->getPositionY() + 5.f });
+                    this->addChild(particle);
+                }
             }
-      
         }
         
         m_fields->m_hasBeenOpened = true;
-        return;
     }
 
     void updateLabelValues() {
         LevelInfoLayer::updateLabelValues();
-        if (ListManager::demonIDList.size() == 0) {
+
+        if (ListManager::demonIDList.empty()) {
             return;
         }
 
