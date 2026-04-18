@@ -102,8 +102,14 @@ return true;
     }
 
     void hideStuff() {
+    if (this->m_pageBtn) {
         this->m_pageBtn->setVisible(false);
-        this->m_countText->setString(fmt::format("{} to {} of 250", this->m_fields->m_currentPage * 10 + 1, this->m_fields->m_currentPage * 10 + 10).c_str());
     }
-};
+    if (this->m_countText) {
+        this->m_countText->setString(fmt::format("{} to {} of 250",
+            this->m_fields->m_currentPage * 10 + 1,
+            this->m_fields->m_currentPage * 10 + 10
+        ).c_str());
+    }
+}
 
