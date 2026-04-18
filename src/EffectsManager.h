@@ -1,5 +1,6 @@
 #ifndef EFFECTSMANAGER_H
 #define EFFECTSMANAGER_H
+#include <Geode/utils/cocos.hpp>
 
 using namespace geode::prelude;
 
@@ -57,8 +58,7 @@ class EffectsManager {
 
             CCSprite* bg = nullptr;
 
-            CCObject* obj;
-            CCARRAY_FOREACH(layer->getChildren(), obj) {
+            for (auto* obj : someNode->getChildrenExt()) {
                 if (CCSprite* spr = dynamic_cast<CCSprite*>(obj)) {
                     if (spr->getScaledContentSize().width >= CCDirector::sharedDirector()->getWinSize().width - 5) {
                         bg = spr;
