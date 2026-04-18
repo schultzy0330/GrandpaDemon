@@ -4,6 +4,8 @@
 #include <string>
 #include <Geode/Geode.hpp>
 #include <sstream>
+#include <Geode/Geode.hpp>
+#include <sstream>
 
 using namespace geode::prelude;
 
