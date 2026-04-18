@@ -2,6 +2,8 @@
 #include <Geode/modify/LevelCell.hpp>
 #include "ListManager.h"
 #include "EffectsManager.h"
+#include <Geode/utils/cocos.hpp>
+
 
 using namespace geode::prelude;
 
@@ -26,54 +28,55 @@ class $modify(LevelCell) {
 
         CCSprite* originalIcon = nullptr;
 
-        CCObject* obj;
-        CCARRAY_FOREACH(m_mainLayer->getChildren(), obj) {
-            if (CCNode* newObj = dynamic_cast<CCNode*>(obj)) {
-                if (newObj->getZOrder() == 2) {
-                    newObj->setID("grd-demon-icon-layer");
-                    CCObject* obj2;
-                    CCARRAY_FOREACH(newObj->getChildren(), obj2) {
-                        if (CCSprite* newObj2 = dynamic_cast<CCSprite*>(obj2)) {
-                            if (newObj2->getZOrder() == 3) {
-                                originalIcon = newObj2;
-                                break;
-                            }
-                        }
+       for (auto* obj : m_mainLayer->getChildrenExt()) {
+    if (CCNode* newObj = dynamic_cast<CCNode*>(obj)) {
+        if (newObj->getZOrder() == 2) {
+            newObj->setID("grd-demon-icon-layer");
+            for (auto* obj2 : newObj->getChildrenExt()) {
+                if (CCSprite* newObj2 = dynamic_cast<CCSprite*>(obj2)) {
+                    if (newObj2->getZOrder() == 3) {
+                        originalIcon = newObj2;
+                        break;
                     }
                 }
             }
         }
+    }
+}
 
         if (originalIcon == nullptr) {
             return;
         }
 
         CCSprite* newIcon = ListManager::getSpriteFromPosition(aredlPos, false);
+        if (!newIcon) {
+    return;
+}
         //CCSprite* newIcon = CCSprite::createWithSpriteFrameName("GrD_demon0.png"_spr);
         auto layer = m_mainLayer->getChildByID("grd-demon-icon-layer");
+        if (!layer) {
+    return;
+}
 
         auto newPos = originalIcon->getPosition();
         newIcon->setPosition(originalIcon->getPosition());
         newIcon->setZOrder(originalIcon->getZOrder()+25);
         
-        CCObject* clearObj;
-        CCARRAY_FOREACH(originalIcon->getChildren(), clearObj) {
-            if (CCSprite* newObj = dynamic_cast<CCSprite*>(clearObj)) {
-                if (newObj->getTag() == 69420) {
-                    newObj->removeFromParentAndCleanup(true);
-                }
-            }
+        for (auto* clearObj : originalIcon->getChildrenExt()) {
+    if (CCSprite* newObj = dynamic_cast<CCSprite*>(clearObj)) {
+        if (newObj->getTag() == 69420) {
+            newObj->removeFromParentAndCleanup(true);
         }
+    }
+}
 
-        CCObject* iconObj;
-        CCARRAY_FOREACH(originalIcon->getChildren(), iconObj) {
-            if (CCSprite* newObj = dynamic_cast<CCSprite*>(iconObj)) {
-                newObj->setTag(69420);
-                layer->addChild(newObj);
-                newObj->setPosition(newPos);
-            }
-        }
-
+       for (auto* iconObj : originalIcon->getChildrenExt()) {
+    if (CCSprite* newObj = dynamic_cast<CCSprite*>(iconObj)) {
+        newObj->setTag(69420);
+        layer->addChild(newObj);
+        newObj->setPosition(newPos);
+    }
+}
         originalIcon->setVisible(false);
 
         layer->addChild(newIcon);
