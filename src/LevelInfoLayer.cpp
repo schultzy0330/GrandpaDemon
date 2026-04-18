@@ -5,6 +5,7 @@
 #include "ListManager.h"
 #include "EffectsManager.h"
 #include "ParticleManager.h"
+#include <Geode/utils/cocos.hpp>
 
 using namespace geode::prelude;
 
@@ -54,23 +55,21 @@ class $modify(GrDInfoLayer, LevelInfoLayer) {
         newIcon->setZOrder(originalIcon->getZOrder()+10);
         
 
-        CCObject* clearObj;
-        CCARRAY_FOREACH(originalIcon->getChildren(), clearObj) {
-            if (CCSprite* newObj = dynamic_cast<CCSprite*>(clearObj)) {
-                if (newObj->getTag() == 69420) {
-                    newObj->removeFromParentAndCleanup(true);
-                }
-            }
+       for (auto* clearObj : CCArrayExt<CCNode*>(originalIcon->getChildren())) {
+    if (CCSprite* newObj = dynamic_cast<CCSprite*>(clearObj)) {
+        if (newObj->getTag() == 69420) {
+            newObj->removeFromParentAndCleanup(true);
         }
+    }
+}
 
-        CCObject* iconObj;
-        CCARRAY_FOREACH(originalIcon->getChildren(), iconObj) {
-            if (CCSprite* newObj = dynamic_cast<CCSprite*>(iconObj)) {
-                newObj->setTag(69420);
-                this->addChild(newObj);
-                newObj->setPosition(newPos);
-            }
-        }
+       for (auto* iconObj : CCArrayExt<CCNode*>(originalIcon->getChildren())) {
+    if (CCSprite* newObj = dynamic_cast<CCSprite*>(iconObj)) {
+        newObj->setTag(69420);
+        this->addChild(newObj);
+        newObj->setPosition(newPos);
+    }
+}
 
         originalIcon->setVisible(false);
 
