@@ -2,6 +2,8 @@
 #define LISTMANAGER_H
 #include <vector>
 #include <string>
+#include <Geode/Geode.hpp>
+#include <sstream>
 
 using namespace geode::prelude;
 
