@@ -34,65 +34,49 @@ class ListManager {
             return -1;
         }
 
-        inline static CCSprite* getSpriteFromPosition(int pos, bool hasText) {
-            if (pos <= 499 &&
-                pos > 249) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon0_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon0.png"_spr);
-                    }
-                }
+       inline static CCSprite* getSpriteFromPosition(int pos, bool hasText) {
+    if (pos <= 499 && pos > 249) {
+        return CCSprite::createWithSpriteFrameName(
+            hasText ? "GrD_demon0_text.png"_spr : "GrD_demon0.png"_spr
+        );
+    }
 
-            if (pos <= 249 &&
-                pos > 149) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon1_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon1.png"_spr);
-                    }
-                }
+    if (pos <= 249 && pos > 149) {
+        return CCSprite::createWithSpriteFrameName(
+            hasText ? "GrD_demon1_text.png"_spr : "GrD_demon1.png"_spr
+        );
+    }
 
-            if (pos <= 149 &&
-                pos > 74) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon2_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon2.png"_spr);
-                    }
-                }
-            if (pos <= 74 &&
-                pos > 24) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon3_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon3.png"_spr);
-                    }
-                }
-            if (pos <= 24 &&
-                pos > 0) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon4_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon4.png"_spr);
-                    }
-                }
-            if (pos == 0) {
-                if ((Mod::get()->getSettingValue<bool>("grandpa-demon-disable"))) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon4_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon4.png"_spr);
-                    }
-                } else {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon5_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon5.png"_spr);
-                    }
-                }
-            } 
-        }
+    if (pos <= 149 && pos > 74) {
+        return CCSprite::createWithSpriteFrameName(
+            hasText ? "GrD_demon2_text.png"_spr : "GrD_demon2.png"_spr
+        );
+    }
+
+    if (pos <= 74 && pos > 24) {
+        return CCSprite::createWithSpriteFrameName(
+            hasText ? "GrD_demon3_text.png"_spr : "GrD_demon3.png"_spr
+        );
+    }
+
+    if (pos <= 24 && pos > 0) {
+        return CCSprite::createWithSpriteFrameName(
+            hasText ? "GrD_demon4_text.png"_spr : "GrD_demon4.png"_spr
+        );
+    }
+
+    if (pos == 0) {
+        bool disableGrandpa = Mod::get()->getSettingValue<bool>("grandpa-demon-disable");
+        return CCSprite::createWithSpriteFrameName(
+            hasText
+                ? (disableGrandpa ? "GrD_demon4_text.png"_spr : "GrD_demon5_text.png"_spr)
+                : (disableGrandpa ? "GrD_demon4.png"_spr : "GrD_demon5.png"_spr)
+        );
+    }
+
+    // fallback (prevents crash)
+    return nullptr;
+}
 
         inline static GJSearchObject* getSearchObject(int upper, int lower) {
             std::stringstream download;
