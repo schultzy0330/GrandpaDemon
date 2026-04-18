@@ -1,6 +1,7 @@
 #include <Geode/Bindings.hpp>
 #include <Geode/modify/DemonFilterSelectLayer.hpp>
 #include "ListManager.h"
+#include <Geode/utils/cocos.hpp>
 
 class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
 
@@ -29,40 +30,36 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
         handleTouchPriority(this);
         CCLayer* layer = nullptr;
 
-        CCObject* layerObj;
-        CCARRAY_FOREACH(this->getChildren(), layerObj) {
-            if (auto newObj = static_cast<CCLayer*>(layerObj)) {
-                layer = newObj;
-            }
-        }
+       for (auto* layerObj : CCArrayExt<CCNode*>(this->getChildren())) {
+    if (auto newObj = dynamic_cast<CCLayer*>(layerObj)) {
+        layer = newObj;
+    }
+}
 
         CCScale9Sprite* s9spr = nullptr;
         CCLabelBMFont* label = nullptr;
         CCMenu* menu = nullptr;
         
-        CCObject* obj;
-        CCARRAY_FOREACH(layer->getChildren(), obj) {
-            if (auto newObj = dynamic_cast<CCScale9Sprite*>(obj)) {
-                s9spr = newObj;
-            } else if (auto newObj2 = dynamic_cast<CCLabelBMFont*>(obj)) {
-                label = newObj2;
-            } else if (auto newObj3 = dynamic_cast<CCMenu*>(obj)) {
-                menu = newObj3;
-            }
-        }
+       for (auto* obj : CCArrayExt<CCNode*>(layer->getChildren())) {
+    if (auto newObj = dynamic_cast<CCScale9Sprite*>(obj)) {
+        s9spr = newObj;
+    } else if (auto newObj2 = dynamic_cast<CCLabelBMFont*>(obj)) {
+        label = newObj2;
+    } else if (auto newObj3 = dynamic_cast<CCMenu*>(obj)) {
+        menu = newObj3;
+    }
+}
 
 
-        // Find OK Button
         CCMenuItemSpriteExtra* okButton = nullptr;
-        CCObject* obj_ok;
-        CCARRAY_FOREACH(menu->getChildren(), obj_ok) {
-            if (auto newObj = dynamic_cast<CCMenuItemSpriteExtra*>(obj_ok)) {
-                if (newObj->getPositionY() < 0) {
-                    okButton = newObj;
-                    break;
-                }
-            }
+for (auto* obj_ok : CCArrayExt<CCNode*>(menu->getChildren())) {
+    if (auto newObj = dynamic_cast<CCMenuItemSpriteExtra*>(obj_ok)) {
+        if (newObj->getPositionY() < 0) {
+            okButton = newObj;
+            break;
         }
+    }
+}
 
         auto csize = s9spr->getContentSize();
         s9spr->setContentSize({csize.width, csize.height * 1.5f});
