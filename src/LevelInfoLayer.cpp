@@ -26,22 +26,16 @@ class $modify(GrDInfoLayer, LevelInfoLayer) {
         bool iconFound = false;
 
         // Iterate through every object that is a direct child of the layer to find the difficulty face.
-        CCObject* obj;
-        CCARRAY_FOREACH(this->getChildren(), obj) {
-            // Check to see if the object is a sprite.
-            if (CCSprite* newObj = dynamic_cast<CCSprite*>(obj)) {
-                // Check to see if the object is the demon difficulty icon
-                // Note that the child-index "stars-icon" doesn't appear to work all the time.
-                // Instead of using an absolute index, get the object that fits the following criteria:
-                if (newObj->getPosition() == m_difficultySprite->getPosition()
-                && newObj->getZOrder() == 3) {
-                    //newObj->setColor({0, 255, 0});
-                    originalIcon = newObj;
-                    iconFound = true;
-                    break;
-                }
-            }
+       for (auto* obj : CCArrayExt<CCNode*>(this->getChildren())) {
+    if (CCSprite* newObj = dynamic_cast<CCSprite*>(obj)) {
+        if (newObj->getPosition() == m_difficultySprite->getPosition()
+        && newObj->getZOrder() == 3) {
+            originalIcon = newObj;
+            iconFound = true;
+            break;
         }
+    }
+}
 
         // If the demon face somehow isn't found, notify the user.
         if (originalIcon == nullptr || !iconFound) {
