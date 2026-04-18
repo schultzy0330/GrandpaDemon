@@ -21,7 +21,7 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
 
     bool init() {
         
-        DemonFilterSelectLayer::init();
+       if (!DemonFilterSelectLayer::init()) return false;
 
         if (ListManager::demonIDList.empty()) {
             return true;
